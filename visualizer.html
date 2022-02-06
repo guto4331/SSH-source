@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title> 解法① </title>
+</head>
+
+<pre><code>
+#include &lt;Siv3D.hpp&gt; // OpenSiv3D v0.4.3
+#include &lt;HamFramework.hpp&gt;
+
+Point points[1010];
+bool is_point[1010][1010];
+
+void Main(){
+	String filename = U"test.txt";
+	TextReader reader(U"input/" + filename);
+	if(!reader) throw Error(U"Failed to Open" + filename);
+
+	int h = 0, w = 0;
+	String s;
+	reader.readLine(s);
+	int vis = Parse<int>(s);
+	reader.readLine(s);
+	int n = Parse<int>(s);
+	for(int i = 0; i < n; i++){
+		reader.readLine(s);
+		points[i] = Parse<Point>(s);
+		int x = points[i].x, y = points[i].y;
+		is_point[x][y] = true;
+		if(w < x) w = x;
+		if(h < y) h = y;
+	}
+	reader.readLine(s);
+	int ssize = Parse<int>(s);
+	Array<Array<std::pair<int, int>>> edges((int)ssize);
+	for(int i = 0; i < ssize; i++){
+		reader.readLine(s);
+		int len = Parse<int>(s);
+		for(int j = 0; j < len; j++){
+			reader.readLine(s);
+			auto [from, to] = Parse<Point>(s);
+			edges[i] << std::pair<int, int>{ from, to };
+		}
+	}
+	reader.readLine(s);
+	auto [start, end] = Parse<Point>(s);
+	Array<Array<Array<int>>> routes(n, Array<Array<int>>(n));
+	if(vis){
+		for(int i = 0; i < n; i++) for(int j = 0; j < n; j++){
+			reader.readLine(s);
+			int len = Parse<int>(s);
+			for(int k = 0; k < len; k++){
+				reader.readLine(s);
+				routes[i][j] << Parse<int>(s);
+			}
+		}
+	}
+
+	Camera2D camera;
+	int winh = 600, winw = 600;
+	Window::Resize(winh, winw);
+	int sx = 50, sy = 50;
+	double step = 0.0;
+	TextEditState fromTextEdit, toTextEdit;
+	while(System::Update()){
+		camera.update();
+		{
+			const auto t1 = camera.createTransformer();
+			Rect(sx - 2, sy - 2, sx + w + 2, sy + h + 2).draw();
+			for(int x = 0; x < 1010; x++) for(int y = 0; y < 1010; y++){
+				if(is_point[x][y]) Circle(sx + x, sy + y, 2).draw(Palette::Red);
+			}
+
+			SimpleGUI::Slider(U"step:", step, 0.0, ssize - 1, Vec2{sx - 2, sy - 60}, 120, 300);
+			SimpleGUI::TextBox(fromTextEdit, Vec2(sx - 2, sy - 120));
+			SimpleGUI::TextBox(toTextEdit, Vec2(sx + 200, sy - 120));
+
+			for(int i = 0; i < edges[(int)step].size(); i++){
+				auto [from, to] = edges[(int)step][i];
+				
+				Line(points[from].x + sx, points[from].y + sy, 
+					 points[to].x + sx, points[to].y + sy).draw(1, Palette::Black);
+			}
+
+			if(vis){
+				try{
+					int from, to;
+					from = Parse<int>(fromTextEdit.text), to = Parse<int>(toTextEdit.text);
+					if(0 <= from && from < n && 0 <= to && to < n){
+						Circle(sx + points[from].x, sy + points[from].y, 2).draw(Palette::Greenyellow);
+						Circle(sx + points[to].x, sy + points[to].y, 2).draw(Palette::Orangered);
+						Array<int> route = routes[from][to];
+						for(int j = 0; j < route.size() - 1; j++){
+							Line(points[route[j]].x + sx, points[route[j]].y + sy,
+								 points[route[j + 1]].x + sx, points[route[j + 1]].y + sy)
+							.draw(1, Palette::Deepskyblue);
+						}
+					}
+				}catch(Error e){
+					
+				}
+			}
+		}
+		camera.draw(Palette::Orange);
+	}
+}
+
+/*
+	OpenSiv3D のライセンス表示
+
+	MIT License
+
+	Copyright (c) 2008-2019 Ryo Suzuki
+	Copyright (c) 2016-2019 OpenSiv3D Project
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in all
+	copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+	SOFTWARE.
+
+*/
+
+</code></pre>
+</body>
+</html>
+	

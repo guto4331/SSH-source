@@ -1,2 +1,2 @@
 2019年度SSH研究「交差点での右折にかかる時間を考慮した道路網の構築アルゴリズムの設計」のソースコード
-https://guto4331.github.io/SSH-source/ からもアクセス可能
+https://guto4331.github.io/SSH-source/ からもアクセス可能（現在停止中）

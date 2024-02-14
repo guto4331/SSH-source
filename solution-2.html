@@ -9,33 +9,33 @@
 #include &lt;bits/stdc++.h&gt;
 using namespace std;
 #define endl "\n"
-template<class T> bool chmin(T& a, T b){ if (a > b){ a = b; return true; } return false; }
+template&lt;class T&gt; bool chmin(T&amp; a, T b){ if (a &gt; b){ a = b; return true; } return false; }
 const double INF = 1e9;
-using Graph = vector<vector<int>>;
+using Graph = vector&lt;vector&lt;int&gt;&gt;;
 // dist: 現時点での最小コスト, from: 1 つ前の頂点, cur: 今の頂点
 typedef struct info{
     double dist; int from, cur;
     info(double dist, int from, int cur) : dist(dist), from(from), cur(cur) {}
 }info_t;
-bool operator >(info_t a, info_t b){
-    return a.dist > b.dist;
+bool operator &gt;(info_t a, info_t b){
+    return a.dist &gt; b.dist;
 };
 
 namespace geometry2d{
     const double EPS = 1e-10;
     int sgn(const double a){
-        if(abs(a) < EPS) return 0;
-        else if(a < -EPS) return -1;
+        if(abs(a) &lt; EPS) return 0;
+        else if(a &lt; -EPS) return -1;
         else return 1;
     }
     struct Point{
         double x, y;
         Point(double x = 0.0, double y = 0.0) : x(x), y(y) {};
-        bool operator ==(Point other) const{ return (x == other.x && y == other.y); }
-        Point operator +(const Point& other) const{ return { x + other.x, y + other.y }; }
-        Point operator -(const Point& other) const{ return { x - other.x, y - other.y }; }
+        bool operator ==(Point other) const{ return (x == other.x &amp;&amp; y == other.y); }
+        Point operator +(const Point&amp; other) const{ return { x + other.x, y + other.y }; }
+        Point operator -(const Point&amp; other) const{ return { x - other.x, y - other.y }; }
         Point operator *(double k) const{ return { x * k, y * k }; }
-        bool isZero(){ return (x == 0 && y == 0); }
+        bool isZero(){ return (x == 0 &amp;&amp; y == 0); }
         double dot(Point other) const{ return x * other.x + y * other.y; }
         double cross(Point other) const{ return x * other.y - y * other.x; }
         double length() const{ return sqrt(x * x + y * y); }
@@ -54,14 +54,14 @@ namespace geometry2d{
             ACB の順番で一直線上に並ぶなら 0
             BAC の順番で一直線上に並ぶなら -2
     */
-    int judge_turn_type(const Point& a, const Point& b, const Point& c){
+    int judge_turn_type(const Point&amp; a, const Point&amp; b, const Point&amp; c){
         if(a == c || b == c) return 0;
-	    double crval = (b - a).cross(c - b);
-        if(crval > 0) return 1;
-        else if(crval < 0) return -1;
+        double crval = (b - a).cross(c - b);
+        if(crval &gt; 0) return 1;
+        else if(crval &lt; 0) return -1;
         else{
-            if((a - b).dot(c - b) < 0) return 2;
-            else if((a - c).dot(b - c) < 0) return 0;
+            if((a - b).dot(c - b) &lt; 0) return 2;
+            else if((a - c).dot(b - c) &lt; 0) return 0;
             else return -2;
         }
     }
@@ -76,20 +76,20 @@ namespace geometry2d{
     struct Segment : Line{
         Segment(Point a, Point b) : Line(a, b) {}
     };
-	bool isParallel(Line a, Line b){
-		return sgn(a.toVec().cross(b.toVec())) == 0;
-	}
-	// 垂直かどうか
+    bool isParallel(Line a, Line b){
+        return sgn(a.toVec().cross(b.toVec())) == 0;
+    }
+    // 垂直かどうか
     bool isOrthogonal(Line a, Line b){
-		return sgn(a.toVec().dot(b.toVec())) == 0;
-	}
-    pair<bool, Point> lineIntersection(Line a, Line b){
+        return sgn(a.toVec().dot(b.toVec())) == 0;
+    }
+    pair&lt;bool, Point&gt; lineIntersection(Line a, Line b){
         if(isParallel(a, b)) return { false, error_val };
         Point ret = b.from + b.toVec() * (a.toVec().cross(a.to - b.from) / a.toVec().cross(b.toVec()));
         return { true, ret };
     }
-    pair<bool, Point> segmentIntersection(Segment a, Segment b){
-        if(judge_turn_type(a.from, a.to, b.from) * judge_turn_type(a.from, a.to, b.to) <= 0 && judge_turn_type(b.from, b.to, a.from) * judge_turn_type(b.from, b.to, a.to) <= 0){
+    pair&lt;bool, Point&gt; segmentIntersection(Segment a, Segment b){
+        if(judge_turn_type(a.from, a.to, b.from) * judge_turn_type(a.from, a.to, b.to) &lt;= 0 &amp;&amp; judge_turn_type(b.from, b.to, a.from) * judge_turn_type(b.from, b.to, a.to) &lt;= 0){
             if(isParallel(a, b)) return { true, error_val };
             else return lineIntersection(a, b);
         }else return { false, error_val };
@@ -104,49 +104,49 @@ struct dsu{
         explicit dsu(int n) : _n(n), parent_or_size(n, -1){}
 
         int merge(int a, int b){
-            assert(0 <= a && a < _n);
-            assert(0 <= b && b < _n);
+            assert(0 &lt;= a &amp;&amp; a &lt; _n);
+            assert(0 &lt;= b &amp;&amp; b &lt; _n);
             int x = leader(a), y = leader(b);
             if (x == y) return x;
-            if (-parent_or_size[x] < -parent_or_size[y]) swap(x, y);
+            if (-parent_or_size[x] &lt; -parent_or_size[y]) swap(x, y);
             parent_or_size[x] += parent_or_size[y];
             parent_or_size[y] = x;
             return x;
         }
 
     bool same(int a, int b){
-        assert(0 <= a && a < _n);
-        assert(0 <= b && b < _n);
+        assert(0 &lt;= a &amp;&amp; a &lt; _n);
+        assert(0 &lt;= b &amp;&amp; b &lt; _n);
         return leader(a) == leader(b);
     }
 
     int leader(int a){
-        assert(0 <= a && a < _n);
-        if (parent_or_size[a] < 0) return a;
+        assert(0 &lt;= a &amp;&amp; a &lt; _n);
+        if (parent_or_size[a] &lt; 0) return a;
         return parent_or_size[a] = leader(parent_or_size[a]);
     }
 
     int size(int a){
-        assert(0 <= a && a < _n);
+        assert(0 &lt;= a &amp;&amp; a &lt; _n);
         return -parent_or_size[leader(a)];
     }
 
-    vector<vector<int>> groups(){
-        vector<int> leader_buf(_n), group_size(_n);
-        for (int i = 0; i < _n; i++){
+    vector&lt;vector&lt;int&gt;&gt; groups(){
+        vector&lt;int&gt; leader_buf(_n), group_size(_n);
+        for (int i = 0; i &lt; _n; i++){
             leader_buf[i] = leader(i);
             group_size[leader_buf[i]]++;
         }
-        vector<vector<int>> result(_n);
-        for (int i = 0; i < _n; i++){
+        vector&lt;vector&lt;int&gt;&gt; result(_n);
+        for (int i = 0; i &lt; _n; i++){
             result[i].reserve(group_size[i]);
         }
-        for (int i = 0; i < _n; i++){
+        for (int i = 0; i &lt; _n; i++){
             result[leader_buf[i]].push_back(i);
         }
         result.erase(
             remove_if(result.begin(), result.end(),
-                           [&](const vector<int>& v){ return v.empty(); }),
+                            [&amp;](const vector&lt;int&gt;&amp; v){ return v.empty(); }),
             result.end());
         return result;
     }
@@ -155,7 +155,7 @@ struct dsu{
         int _n;
         // root node: -1 * component size
         // otherwise: parent
-        vector<int> parent_or_size;
+        vector&lt;int&gt; parent_or_size;
 };
 
 // 右折一回にかかるコスト
@@ -169,16 +169,16 @@ const int search_depth = 30;
 // 開始時間
 const int start = clock();
 // 頂点の座標
-vector<Point> nodes;
-// 辺の情報 (u, v)(u < v)
-vector<pair<int, int>> edges;
+vector&lt;Point&gt; nodes;
+// 辺の情報 (u, v)(u &lt; v)
+vector&lt;pair&lt;int, int&gt;&gt; edges;
 // 乱数生成器
 random_device rnd;
 mt19937 mt(rnd());
-uniform_int_distribution<> rnd_node(0, (int)1e5), rnd_edge(0, (int)1e9), rnd_type(0, 1);
-uniform_real_distribution<> rnd_temp(0, 1);
+uniform_int_distribution&lt;&gt; rnd_node(0, (int)1e5), rnd_edge(0, (int)1e9), rnd_type(0, 1);
+uniform_real_distribution&lt;&gt; rnd_temp(0, 1);
 // 出力
-vector<vector<pair<int, int>>> output;
+vector&lt;vector&lt;pair&lt;int, int&gt;&gt;&gt; output;
 
 /*
     name: get_dist,
@@ -192,7 +192,7 @@ double get_dist(Point s, Point t){
 
 /*
     name: m_vector_rad
-    description: prev->cur と cur->next のなす角を求める
+    description: prev-&gt;cur と cur-&gt;next のなす角を求める
     args: prev, cur, next - 3 点
     return: なす角 [rad]
 */
@@ -209,33 +209,33 @@ double m_vector_rad(Point prev, Point cur, Point next){
         route == false - s から各点への最小コスト
         route == true - s から各点に遷移するときの 1 つ前の頂点の配列
 */
-vector<double> dijkstra(const Graph &g, int s, bool route = false){
+vector&lt;double&gt; dijkstra(const Graph &amp;g, int s, bool route = false){
     int n = g.size();
     vector cost(n, vector(n, INF));
-    for(int i = 0; i < n; i++) cost[i][s] = 0;
-    vector<double> prev_rec(n, -1);
-    priority_queue<info_t, vector<info_t>, greater<info_t>> q;
+    for(int i = 0; i &lt; n; i++) cost[i][s] = 0;
+    vector&lt;double&gt; prev_rec(n, -1);
+    priority_queue&lt;info_t, vector&lt;info_t&gt;, greater&lt;info_t&gt;&gt; q;
     q.emplace(0, -1, s);
     while(!q.empty()){
         auto [cur_cost, prev, cur] = q.top(); q.pop();
         // 現時点でより良いコストが求まっていたら continue
-        if(prev != -1 && cost[prev][cur] < cur_cost) continue;
+        if(prev != -1 &amp;&amp; cost[prev][cur] &lt; cur_cost) continue;
         // 次の頂点へのコストを更新する
         int add_pos;
         double max_rad = 0;
-        vector<pair<double, int>> move;
-        for(const auto& next : g[cur]){
+        vector&lt;pair&lt;double, int&gt;&gt; move;
+        for(const auto&amp; next : g[cur]){
             double new_cost = cur_cost + get_dist(nodes[cur], nodes[next]);
             // 一番角度がきつい道路のみ右折判定
-            if(prev != -1 && judge_turn_type(nodes[prev], nodes[cur], nodes[next]) == -1){
+            if(prev != -1 &amp;&amp; judge_turn_type(nodes[prev], nodes[cur], nodes[next]) == -1){
                 double cur_rad = m_vector_rad(nodes[prev], nodes[cur], nodes[next]);
-                if(max_rad < cur_rad) add_pos = next, max_rad = cur_rad;
+                if(max_rad &lt; cur_rad) add_pos = next, max_rad = cur_rad;
             }
             move.emplace_back(new_cost, next);
         }
-        for(auto&& [tmp_cost, tmp_next] : move){
+        for(auto&amp;&amp; [tmp_cost, tmp_next] : move){
             // 頂点 cur の次数が 3 以上でないと右折にコストはかからない
-            if(g[cur].size() >= 3 && max_rad != 0 && add_pos == tmp_next){
+            if(g[cur].size() &gt;= 3 &amp;&amp; max_rad != 0 &amp;&amp; add_pos == tmp_next){
                 tmp_cost += right_turn_cost;
             }
             if(chmin(cost[cur][tmp_next], tmp_cost)){
@@ -246,9 +246,9 @@ vector<double> dijkstra(const Graph &g, int s, bool route = false){
     }
     
     if(route) return prev_rec;
-    vector<double> ret(n, INF);
-    for(int i = 0; i < n; i++){
-        for(int j = 0; j < n; j++){
+    vector&lt;double&gt; ret(n, INF);
+    for(int i = 0; i &lt; n; i++){
+        for(int j = 0; j &lt; n; j++){
             if(i == j) continue;
             chmin(ret[j], cost[i][j]);
         }
@@ -262,16 +262,16 @@ vector<double> dijkstra(const Graph &g, int s, bool route = false){
     args: g - 評価するグラフ
     return: 評価値
 */
-double evaluate(const Graph &g){
+double evaluate(const Graph &amp;g){
     int n = g.size();
     // cost[i][j] := 2 点 i, j 間の最小コスト
     vector cost(n, vector(n, INF));
-    for(int s = 0; s < n; s++){
+    for(int s = 0; s &lt; n; s++){
         cost[s] = dijkstra(g, s);
     }
     double score = 0;
-    for(int i = 0; i < n; i++){
-        for(int j = 0; j < n; j++){
+    for(int i = 0; i &lt; n; i++){
+        for(int j = 0; j &lt; n; j++){
             if(i == j) continue;
             score += cost[i][j];
         }
@@ -287,19 +287,19 @@ double evaluate(const Graph &g){
         新たな辺の情報とグラフの pair
         変更されなかった場合ともに空の pair
 */
-pair<vector<pair<int, int>>, Graph> modify(Graph g){
+pair&lt;vector&lt;pair&lt;int, int&gt;&gt;, Graph&gt; modify(Graph g){
     int n = g.size();
-    vector<pair<int, int>> new_edges = edges;
+    vector&lt;pair&lt;int, int&gt;&gt; new_edges = edges;
     int t = rnd_type(mt);
     if(t == 0){
         // 新たな辺を追加
         int u = rnd_node(mt) % n, v = rnd_node(mt) % n;
-        if(u > v) swap(u, v);
+        if(u &gt; v) swap(u, v);
         // u と v が異なり、それぞれ 次数が 3 以下 かつ 既に繋がっていない
-        if(u != v && g[u].size() <= 3 && find(g[u].begin(), g[u].end(), v) == g[u].end()
-            && g[v].size() <= 3 && find(g[v].begin(), g[v].end(), u) == g[v].end()){
+        if(u != v &amp;&amp; g[u].size() &lt;= 3 &amp;&amp; find(g[u].begin(), g[u].end(), v) == g[u].end()
+            &amp;&amp; g[v].size() &lt;= 3 &amp;&amp; find(g[v].begin(), g[v].end(), u) == g[v].end()){
             bool ok = true;
-            for(const auto& [from, to] : edges){
+            for(const auto&amp; [from, to] : edges){
                 // 端点は交差判定しない
                 if(u == from || u == to || v == from || v == to) continue;
                 if(segmentIntersection(Segment(nodes[from], nodes[to]), Segment(nodes[u], nodes[v])).first){
@@ -315,16 +315,16 @@ pair<vector<pair<int, int>>, Graph> modify(Graph g){
         }
     }else{
         // 既存の辺を削除
-        if(new_edges.size() > 0){
+        if(new_edges.size() &gt; 0){
             int idx = rnd_edge(mt) % new_edges.size();
             dsu check(n);
-            for(int i = 0; i < (int)new_edges.size(); i++){
+            for(int i = 0; i &lt; (int)new_edges.size(); i++){
                 if(i != idx) check.merge(new_edges[i].first, new_edges[i].second);
             }
             if(check.groups().size() == 1){
                 auto [u, v] = new_edges[idx];
-                if(find(g[u].begin(), g[u].end(), v) != g[u].end() && find(g[v].begin(), g[v].end(), v) != g[v].end() &&
-                    g[u].size() > 1 && g[v].size() > 1){
+                if(find(g[u].begin(), g[u].end(), v) != g[u].end() &amp;&amp; find(g[v].begin(), g[v].end(), v) != g[v].end() &amp;&amp;
+                    g[u].size() &gt; 1 &amp;&amp; g[v].size() &gt; 1){
                         new_edges.erase(new_edges.begin() + idx);
                         g[u].erase(find(g[u].begin(), g[u].end(), v));
                         g[v].erase(find(g[v].begin(), g[v].end(), u));
@@ -333,7 +333,7 @@ pair<vector<pair<int, int>>, Graph> modify(Graph g){
             }
         }
     }
-    return make_pair(vector<pair<int, int>>{}, Graph{});
+    return make_pair(vector&lt;pair&lt;int, int&gt;&gt;{}, Graph{});
 }
 
 /*
@@ -346,21 +346,21 @@ Graph optimize(Graph res){
     const double start_temp = 10000, end_temp = 1;
     while(true){
         double now = clock();
-        if(now - start > TIME_LIMIT) break;
+        if(now - start &gt; TIME_LIMIT) break;
         Graph best_graph = res;
-        vector<pair<int, int>> best_edges = edges;
+        vector&lt;pair&lt;int, int&gt;&gt; best_edges = edges;
         double best_score = evaluate(res);
         
         // beam_width 個の結果のうち最善のもので更新する
-        for(int i = 0; i < beam_width; i++){
+        for(int i = 0; i &lt; beam_width; i++){
             Graph cand_graph = best_graph;
-            vector<pair<int, int>> cand_edges = best_edges;
+            vector&lt;pair&lt;int, int&gt;&gt; cand_edges = best_edges;
             double cand_score = best_score;
             
-            vector<pair<int, int>> new_edges = cand_edges;
+            vector&lt;pair&lt;int, int&gt;&gt; new_edges = cand_edges;
             Graph new_graph = cand_graph;
             // search_depth 回連続で操作する
-            for(int j = 0; j < search_depth; j++){
+            for(int j = 0; j &lt; search_depth; j++){
                 auto modified = modify(new_graph);
                 // invalid な操作が行われたら更新しない
                 if(modified.first.size() == 0) continue;
@@ -374,7 +374,7 @@ Graph optimize(Graph res){
             double prev_score = cand_score, new_score = evaluate(new_graph);
             double temp = start_temp + (end_temp - start_temp) * (now - start) / TIME_LIMIT;
             double prob = exp((prev_score - new_score) / temp);
-            if(prob > rnd_temp(mt) || new_score < prev_score){
+            if(prob &gt; rnd_temp(mt) || new_score &lt; prev_score){
                 cand_graph = new_graph;
                 cand_edges = new_edges;
                 cand_score = new_score;
@@ -401,9 +401,9 @@ Graph optimize(Graph res){
 */
 Graph init(int n){
     Graph init_graph(n);
-    vector<bool> used(n);
-    priority_queue<pair<double, pair<int, int>>, vector<pair<double, pair<int, int>>>, greater<pair<double, pair<int, int>>>> q;
-    q.emplace(0, pair<int, int>{-1, 0});
+    vector&lt;bool&gt; used(n);
+    priority_queue&lt;pair&lt;double, pair&lt;int, int&gt;&gt;, vector&lt;pair&lt;double, pair&lt;int, int&gt;&gt;&gt;, greater&lt;pair&lt;double, pair&lt;int, int&gt;&gt;&gt;&gt; q;
+    q.emplace(0, pair&lt;int, int&gt;{-1, 0});
     while(!q.empty()){
         auto [prev, v] = q.top().second; q.pop();
         if(used[v]) continue;
@@ -414,10 +414,10 @@ Graph init(int n){
             used[prev] = true;
         }
         used[v] = true;
-        for(int u = 0; u < n; u++){
-            // まだ選んでない && つなげた後の次数が 4 以下
-            if(!used[u] && init_graph[u].size() < 3 && init_graph[v].size() < 3){
-                q.emplace(get_dist(nodes[v], nodes[u]), pair<int, int>{v, u});
+        for(int u = 0; u &lt; n; u++){
+            // まだ選んでない &amp;&amp; つなげた後の次数が 4 以下
+            if(!used[u] &amp;&amp; init_graph[u].size() &lt; 3 &amp;&amp; init_graph[v].size() &lt; 3){
+                q.emplace(get_dist(nodes[v], nodes[u]), pair&lt;int, int&gt;{v, u});
             }
         }
     }
@@ -430,8 +430,8 @@ Graph init(int n){
     args: prev - dijkstra で得られた配列、t - 終点
     return: t への最短経路
 */
-vector<int> get_path(const vector<int> &prev, int t) {
-    vector<int> path;
+vector&lt;int&gt; get_path(const vector&lt;int&gt; &amp;prev, int t) {
+    vector&lt;int&gt; path;
     for (int cur = t; cur != -1; cur = prev[cur]){
         path.emplace_back(cur);
     }
@@ -448,11 +448,11 @@ int main(){
     input_file.open("in.txt");
     assert(input_file);
     int n, vis;
-    input_file >> n >> vis;
+    input_file &gt;&gt; n &gt;&gt; vis;
     nodes.resize(n);
-    for(auto&& node : nodes){
+    for(auto&amp;&amp; node : nodes){
         double x, y;
-        input_file >> x >> y;
+        input_file &gt;&gt; x &gt;&gt; y;
         node = { x, y };
     }
     input_file.close();
@@ -465,34 +465,34 @@ int main(){
     // 出力
     ofstream output_file;
     output_file.open("out.txt");
-    output_file << fixed << setprecision(2);
+    output_file &lt;&lt; fixed &lt;&lt; setprecision(2);
     
     if(vis){
-        output_file << vis << endl;
-        output_file << n << endl;
-        for(const auto& [x, y] : nodes) output_file << "(" << (int)x << ", " << (int)y << ")" << endl;
-        output_file << output.size() << endl;
-        for(const auto& edge : output){
-            output_file << edge.size() << endl;
-            for(const auto& [u, v] : edge) output_file << "(" << u << ", " << v << ")" << endl;
+        output_file &lt;&lt; vis &lt;&lt; endl;
+        output_file &lt;&lt; n &lt;&lt; endl;
+        for(const auto&amp; [x, y] : nodes) output_file &lt;&lt; "(" &lt;&lt; (int)x &lt;&lt; ", " &lt;&lt; (int)y &lt;&lt; ")" &lt;&lt; endl;
+        output_file &lt;&lt; output.size() &lt;&lt; endl;
+        for(const auto&amp; edge : output){
+            output_file &lt;&lt; edge.size() &lt;&lt; endl;
+            for(const auto&amp; [u, v] : edge) output_file &lt;&lt; "(" &lt;&lt; u &lt;&lt; ", " &lt;&lt; v &lt;&lt; ")" &lt;&lt; endl;
         }
         /* // 全点対
-        for(int s = 0; s < n; s++) for(int t = 0; t < n; t++){
-            vector<int> v;
-            for(const auto& e : dijkstra(final_graph, s, true)) v.emplace_back((int)e);
-            vector<int> temp = get_path(v, t);
-            output_file << temp.size() << endl;
-            for(const auto& e : temp) output_file << e << endl;
+        for(int s = 0; s &lt; n; s++) for(int t = 0; t &lt; n; t++){
+            vector&lt;int&gt; v;
+            for(const auto&amp; e : dijkstra(final_graph, s, true)) v.emplace_back((int)e);
+            vector&lt;int&gt; temp = get_path(v, t);
+            output_file &lt;&lt; temp.size() &lt;&lt; endl;
+            for(const auto&amp; e : temp) output_file &lt;&lt; e &lt;&lt; endl;
         } */
-        output_file << "(" << init_score << ", " << final_score << ")" << endl;
+        output_file &lt;&lt; "(" &lt;&lt; init_score &lt;&lt; ", " &lt;&lt; final_score &lt;&lt; ")" &lt;&lt; endl;
     }else{
-        output_file << init_score << " " << final_score << endl;
+        output_file &lt;&lt; init_score &lt;&lt; " " &lt;&lt; final_score &lt;&lt; endl;
     }
     output_file.close();
     
     return 0;
 }
-
+    
 </code></pre>
 </body>
 </html>
